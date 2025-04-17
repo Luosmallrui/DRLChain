@@ -76,7 +76,7 @@ sigma = 0.8
 omega = 0.2
 # 优化问题的约束指标相关参数
 beta = 0.8
-D_threshold = 1#信誉值的门槛
+D_threshold = 1  # 信誉值的门槛
 security_parameter = 5  # 安全系数
 # 扩展动作空间维度
 # 创建动作空间的 high 数组
@@ -387,6 +387,7 @@ class FederatedLearningBlockchainEnv(gym.Env):
 
             self.eposide_Accuracy += 1
             # 记录到 CSV
+            print("accury", self.eposide_Accuracy, global_accuracy)
             self._append_to_csv(self.accuracy_csv_file_path, [self.eposide_Accuracy, global_accuracy])
 
         # 迭代每个分片
@@ -509,6 +510,7 @@ class FederatedLearningBlockchainEnv(gym.Env):
         bi_obs_1 = self.int_to_binary_array(int(new_obs[1]), obs_len_1)
         bi_obs_2 = self.int_to_binary_array(int(new_obs[2]), obs_len_2)
         self.eposide_Reward += 1
+        print("reward", self.eposide_Reward, reward)
         self._append_to_csv(self.reward_csv_file_path, [self.eposide_Reward, reward])
         # 这里需要进行修改，结合状态空间的格式
         return np.hstack((bi_obs_0, bi_obs_1, bi_obs_2)), reward, done, info
