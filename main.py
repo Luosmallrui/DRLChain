@@ -19,9 +19,9 @@ def args_parser():
     parser.add_argument('--dataset', type=str, default='mnist', help='Dataset: mnist or cifar')
     parser.add_argument('--iid', action='store_true', help='Use IID data distribution')
     parser.add_argument('--num_users', type=int, default=100, help='Number of users')
-    parser.add_argument('--gpu', type=int, default=-1, help='GPU ID, -1 for CPU')
+    parser.add_argument('--gpu', type=int, default=0, help='GPU ID, -1 for CPU')
     parser.add_argument('--model', type=str, default='cnn', help='Model: cnn or mlp')
-    parser.add_argument('--global_rounds', type=int, default=5, help='Number of global training rounds')
+    parser.add_argument('--global_rounds', type=int, default=25, help='Number of global training rounds')
     parser.add_argument('--local_epochs', type=int, default=10, help='Number of local epochs for each user')
     parser.add_argument('--batch_size', type=int, default=64, help='Batch size for local training')
     parser.add_argument('--learning_rate', type=float, default=0.005, help='Learning rate for the model')
@@ -110,7 +110,8 @@ def plot_results(results_dir):
 
 def main():
     args = args_parser()
-    args.device = torch.device('cuda:{}'.format(args.gpu) if torch.cuda.is_available() and args.gpu != -1 else 'cpu')
+    args.device = torch.device('cuda:{}'.format(args.gpu) if torch.cuda.is_available() else 'cpu')
+    print("device",args.device)
     ensure_directory(args.results_dir)
 
     # 节点初始化
@@ -125,7 +126,7 @@ def main():
     print(net_glob)
 
     # 联邦学习环境和RL agent
-    env = FederatedLearningBlockchainEnv(args, dataset_train, dataset_test, net_glob, dict_users)
+    env = FederatedLearningBlockchainEnv(args, dataset_train, dataset_test, net_glob, dict_users,use_wandb=True)
     agent = RLAgent(state_dim=30, action_dim=2 + args.num_users)
 
     # 联邦学习训练主循环
